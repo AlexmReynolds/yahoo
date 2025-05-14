@@ -15,7 +15,7 @@ extension YApi {
         let endpoint = YApiEndpoint()
         let baseURL = endpoint.baseComponentsFor(paths: paths)
         let request = endpoint.makeRequest(components: baseURL, method: .get, queryItems: nil)
-        
+        //TODO: We can pass offset to the Query items if the API supports it.
         let result = try await self.dataTask(request: request)
         
         do {

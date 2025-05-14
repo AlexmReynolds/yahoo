@@ -8,7 +8,7 @@ import UIKit
 
 class YCompaniesListViewModel: NSObject, UITableViewDataSource {
     let title = NSLocalizedString("Companies", comment: "company list title")
-    var companies = [YCompany]()
+    var companies = [YCompany]()//we will assume for now all companies will be stored in memory. In a pagination system we might only store 1 page at a time. It all would depend on pagination requirements and style like infite scroll
     
     var modelDidUpdate: (()->Void)? = nil
     private var isFiltered = false
@@ -29,6 +29,7 @@ class YCompaniesListViewModel: NSObject, UITableViewDataSource {
     }
     
     func loadData() async throws {
+        //We could have more than 1 page of companies in our DB. We can pass offset but to ensure the results don't get weird we must sort during the query. Pass in the sort option to ensure our offset is correct.
         self.companies = self.dataService.getCompanies(offset: 0, sortBySymbol: self.settings.companyListSort == .symbol)
 
         if self.companies.isEmpty {
@@ -36,6 +37,7 @@ class YCompaniesListViewModel: NSObject, UITableViewDataSource {
             self.companies = try await api.fetchCompanies()
             self.dataService.saveCompanies(self.companies)
         }
+        //we are sorting in the DB query so this sort isn't super needed. If we saved the api results into the DB then fetched them back out with a sort, we wouldn't need this sort at all. So much would change depending on how pagination on the api works that in production we would either keep VM sorting or do it all in the DB level
         self.sortCompanies()
         self.queueNextAPIFetch()
     }
@@ -96,6 +98,7 @@ class YCompaniesListViewModel: NSObject, UITableViewDataSource {
                 self.queueNextAPIFetch()
             } catch {
                 //do nothing this is a background fetch
+                //This will kill polling. We could in production have a retry count before killing it.
             }
         }
     }
