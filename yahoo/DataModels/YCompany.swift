@@ -22,6 +22,7 @@ class YCompany {
     let marketCap: YCompanyMarketCap
     let name: String
     let symbol: String
+    var isFavorite = false
     
     init(marketCap: YCompanyMarketCap, name: String, symbol: String) {
         self.marketCap = marketCap

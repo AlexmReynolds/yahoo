@@ -15,11 +15,13 @@ extension CoreDataCompany {
         self.raw = Int64(interfaceObject.marketCap.value)
         self.fmt = interfaceObject.marketCap.formattedString
         self.longFmt = interfaceObject.marketCap.longFormattedString
+        self.isFavorite = interfaceObject.isFavorite
     }
     
     func interfaceObject() -> YCompany {
         let mrkCap = YCompanyMarketCap(formattedString: self.fmt ?? "", longFormattedString: self.longFmt ?? "", value: Int(self.raw))
         let obj = YCompany(marketCap: mrkCap, name: self.name ?? "", symbol: self.symbol ?? "")
+        obj.isFavorite = self.isFavorite
         return obj
     }
     
@@ -34,6 +36,17 @@ extension CoreDataCompany {
         do {
             let request : NSFetchRequest<CoreDataCompany> = CoreDataCompany.fetchRequest()
             request.predicate = predicate
+            let results = try context.fetch(request)
+            return results
+        } catch {
+            return []
+        }
+    }
+    
+    class func getFavorites(context: NSManagedObjectContext) -> [CoreDataCompany] {
+        do {
+            let request : NSFetchRequest<CoreDataCompany> = CoreDataCompany.fetchRequest()
+            request.predicate = NSPredicate(format: "isFavorite == %@",NSNumber(1))
             let results = try context.fetch(request)
             return results
         } catch {

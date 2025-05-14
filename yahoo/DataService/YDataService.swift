@@ -87,8 +87,11 @@ class YDataService {
         }
         context.performAndWait {
             for item in companies {
+                //TODO: This is only called from API and api doesn't have isFavorite so make sure whatever is stored is persisted and ignore API Val
                 if let _settings = CoreDataCompany.getBySymbol(item.symbol, context: context) {
+                    let isFavorite = _settings.isFavorite
                     _settings.updateFrom(interfaceObject: item, context: context)
+                    _settings.isFavorite = isFavorite
                 } else {
                     let _ = CoreDataCompany.make(interfaceObject: item, context: context)
                 }
@@ -97,8 +100,48 @@ class YDataService {
             do {
                 try context.save()
             } catch {
-                print("save gym save error \(error.localizedDescription)")
+                print("save copanies save error \(error.localizedDescription)")
             }
         }
     }
+    
+    func getFavorites() -> [YCompany] {
+        var _context = YCoreDataManager.sharedInstance.mainContext
+        if (!Thread.isMainThread) {
+            _context = YCoreDataManager.sharedInstance.makeThrowawayBackgroundQueue()
+        }
+        guard let context = _context else {
+            return []
+        }
+        var items : [YCompany] = []
+        context.performAndWait {
+            let all = CoreDataCompany.getFavorites(context: context)
+            for item in all {
+                items.append(item.interfaceObject())
+            }
+        }
+        
+        return items
+    }
+    
+    func saveCompany(_ company: YCompany) -> Void {
+        var _context = YCoreDataManager.sharedInstance.mainContext
+        if (!Thread.isMainThread) {
+            _context = YCoreDataManager.sharedInstance.makeThrowawayBackgroundQueue()
+        }
+        guard let context = _context else {
+            return
+        }
+        context.performAndWait {
+            if let _company = CoreDataCompany.getBySymbol(company.symbol, context: context) {
+                _company.updateFrom(interfaceObject: company, context: context)
+            }
+        }
+        do {
+            try context.save()
+        } catch {
+            print("save company save error \(error.localizedDescription)")
+        }
+    }
+    
 }

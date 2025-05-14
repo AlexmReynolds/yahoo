@@ -21,6 +21,7 @@ extension CoreDataCompany {
     @NSManaged public var longFmt: String?
     @NSManaged public var name: String?
     @NSManaged public var symbol: String?
+    @NSManaged public var isFavorite: Bool
 
 }
 

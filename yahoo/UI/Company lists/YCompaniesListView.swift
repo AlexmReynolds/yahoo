@@ -17,6 +17,17 @@ class YCompaniesListView: UIView {
         return tableView
     }()
     
+    var searchBar:UISearchBar = {
+        let bar = UISearchBar()
+        bar.placeholder = NSLocalizedString("Search by name or symbol", comment: "search placeholder")
+        bar.scopeButtonTitles = ["Name","Symbol"]
+        bar.showsCancelButton = true
+        bar.showsSearchResultsButton = true
+        bar.autocapitalizationType = .none
+        bar.autocorrectionType = .no
+        return bar
+    }()
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.setup()
@@ -29,6 +40,8 @@ class YCompaniesListView: UIView {
         self.tableView.topAnchor.constraint(equalTo: self.safeAreaLayoutGuide.topAnchor).isActive = true
         self.tableView.trailingAnchor.constraint(equalTo: self.trailingAnchor).isActive = true
         self.tableView.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
+        self.tableView.tableHeaderView = self.searchBar
+
     }
     
     required init?(coder: NSCoder) {

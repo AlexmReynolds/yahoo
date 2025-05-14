@@ -34,6 +34,7 @@ class YCompaniesListViewController: UIViewController {
         self.castView = view
         view.tableView.dataSource = self.viewModel
         view.tableView.delegate = self
+        view.searchBar.delegate = self.viewModel
         self.view = view
     }
     
@@ -48,8 +49,16 @@ extension YCompaniesListViewController: UITableViewDelegate {
         defer {
             tableView.deselectRow(at: indexPath, animated: true)
         }
-        
-     //   let vc = self.viewModel.detailController(at: indexPath)
-    //    self.navigationController?.pushViewController(vc, animated: true)
+        if let company = self.viewModel.getCompany(at: indexPath.row) {
+            let vc = YCompanyDetailViewController(viewModel: YCompanyDetailViewModel(company: company))
+            vc.delegate = self
+            self.navigationController?.pushViewController(vc, animated: true)
+
+        }
+    }
+}
+extension YCompaniesListViewController: YCompanyDetailViewControllerDelegate {
+    func favoriteUpdated() {
+        self.castView.tableView.reloadData()
     }
 }
