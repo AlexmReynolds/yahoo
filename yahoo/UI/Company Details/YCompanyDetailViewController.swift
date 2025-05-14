@@ -26,7 +26,11 @@ class YCompanyDetailViewController: UIViewController {
         super.viewDidLoad()
         self.title = self.viewModel.title
 
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Favorite", style: .plain, target: self, action: #selector(self.favoriteTapped))
+        if self.viewModel.company.isFavorite {
+            self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Unfavorite", style: .plain, target: self, action: #selector(self.unfavoriteTapped))
+        } else {
+            self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Favorite", style: .plain, target: self, action: #selector(self.favoriteTapped))
+        }
     }
 
     override func loadView() {
@@ -36,9 +40,16 @@ class YCompanyDetailViewController: UIViewController {
         self.view = view
     }
     
-    @objc func favoriteTapped() {
-        self.viewModel.favoriteCompany()
+    @objc func unfavoriteTapped() {
+        self.viewModel.favoriteCompany(isFavorite: false)
         self.delegate?.favoriteUpdated()
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Favorite", style: .plain, target: self, action: #selector(self.favoriteTapped))
+    }
+    
+    @objc func favoriteTapped() {
+        self.viewModel.favoriteCompany(isFavorite: true)
+        self.delegate?.favoriteUpdated()
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Unfavorite", style: .plain, target: self, action: #selector(self.unfavoriteTapped))
     }
  
 }

@@ -56,9 +56,9 @@ class YDataService {
         }
         return
     }
+
     
-    
-    func getCompanies() -> [YCompany] {
+    func getCompanies(offset: Int, sortBySymbol: Bool) -> [YCompany] {
         var _context = YCoreDataManager.sharedInstance.mainContext
         if (!Thread.isMainThread) {
             _context = YCoreDataManager.sharedInstance.makeThrowawayBackgroundQueue()
@@ -68,7 +68,7 @@ class YDataService {
         }
         var items : [YCompany] = []
         context.performAndWait {
-            let all = CoreDataCompany.getAll(context: context)
+            let all = CoreDataCompany.getAll(sortBySymbol: sortBySymbol, fetchOffset: offset, context: context)
             for item in all {
                 items.append(item.interfaceObject())
             }
@@ -144,4 +144,18 @@ class YDataService {
         }
     }
     
+    func getCompany(symbol: String) -> YCompany? {
+        var _context = YCoreDataManager.sharedInstance.mainContext
+        if (!Thread.isMainThread) {
+            _context = YCoreDataManager.sharedInstance.makeThrowawayBackgroundQueue()
+        }
+        guard let context = _context else {
+            return nil
+        }
+        var result: YCompany?
+        context.performAndWait {
+            result = CoreDataCompany.getBySymbol(symbol, context: context)?.interfaceObject()
+        }
+        return result
+    }
 }

@@ -32,10 +32,18 @@ extension CoreDataCompany {
         return obj
     }
     
-    class func getAll(predicate: NSPredicate? = nil, context: NSManagedObjectContext) -> [CoreDataCompany] {
+    class func getAll(sortBySymbol: Bool, fetchOffset: Int, context: NSManagedObjectContext) -> [CoreDataCompany] {
         do {
             let request : NSFetchRequest<CoreDataCompany> = CoreDataCompany.fetchRequest()
-            request.predicate = predicate
+            request.fetchOffset = fetchOffset
+            if sortBySymbol {
+                let sort = NSSortDescriptor(key: #keyPath(CoreDataCompany.symbol), ascending: true)
+                request.sortDescriptors = [sort]
+            } else {
+                let sort = NSSortDescriptor(key: #keyPath(CoreDataCompany.name), ascending: true)
+                request.sortDescriptors = [sort]
+            }
+
             let results = try context.fetch(request)
             return results
         } catch {

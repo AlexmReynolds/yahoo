@@ -60,12 +60,8 @@ class YCompanyDetailView: UIView {
     }
     
     func load(company: YCompany) {
-        let formatter = NumberFormatter()
-        formatter.locale = Locale.current // Change this to another locale if you want to force a specific locale, otherwise this is redundant as the current locale is the default already
-        formatter.numberStyle = .currency
-        
         self.symbolLabel.text = "Symbol: " + company.symbol
         self.nameLabel.text = "Name: " + company.name
-        self.marketCapLabel.text = "Market Cap: " + (formatter.string(for: company.marketCap.value) ?? company.marketCap.formattedString)
+        self.marketCapLabel.text = "Market Cap: " + (company.getLocalizedMarketCap() ?? company.marketCap.formattedString)
     }
 }

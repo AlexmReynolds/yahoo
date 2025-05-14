@@ -15,8 +15,8 @@ class YCompanyDetailViewModel {
         self.title = company.name
     }
     
-    func favoriteCompany() {
-        self.company.isFavorite = true
+    func favoriteCompany(isFavorite: Bool) {
+        self.company.isFavorite = isFavorite
         self.dataService.saveCompany(self.company)
     }
 }
